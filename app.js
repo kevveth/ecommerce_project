@@ -11,6 +11,8 @@ const usersRouter = require('./routes/users'),
 const app = express();
 const port = process.env.port || 3000; 
 
+app.use(express.json());
+
 app.get('/',(request,response)=>{
     response.send('Welcome to our simple online ecommerce web app!');
    });

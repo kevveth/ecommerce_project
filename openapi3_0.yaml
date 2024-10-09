@@ -1,0 +1,295 @@
+openapi: 3.0.0
+info:
+  title: E-commerce API
+  version: v1
+
+tags:
+  - name: Users
+  - name: Products
+  - name: Carts
+  - name: Cart Items
+  - name: Orders
+  - name: Order Items
+
+paths:
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        '200':
+          description: A single user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Get all products
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get a product by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the product to get
+      responses:
+        '200':
+          description: A single product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+  /carts/{userId}:
+    get:
+      tags:
+        - Carts
+      summary: Get a user's cart
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user
+      responses:
+        '200':
+          description: A cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: Cart not found
+  /cart_items/{cartId}:
+    get:
+      tags:
+        - Cart Items
+      summary: Get cart items
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the cart
+      responses:
+        '200':
+          description: A list of cart items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+        '404':
+          description: Cart items not found
+  /orders/{userId}:
+    get:
+      tags:
+        - Orders
+      summary: Get a user's orders
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '404':
+          description: Orders not found
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get an order by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the order to get
+      responses:
+        '200':
+          description: A single order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+  /order_items/{orderId}:
+    get:
+      tags:
+        - Order Items
+      summary: Get order items
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the order
+      responses:
+        '200':
+          description: A list of order items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderItem'
+        '404':
+          description: Order items not found
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          description: The unique identifier for a user
+        username:
+          type: string
+          description: The username
+        email:
+          type: string
+          description: The email address
+        # ... other properties ...
+    Product:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          description: The unique identifier for a product
+        name:
+          type: string
+          description: The name of the product
+        description:
+          type: string
+          description: The description of the product
+        price:
+          type: number
+          format: float
+          description: The price of the product
+        image_url:
+          type: string
+          description: The URL of the product image
+        # ... other properties ...
+    Cart:
+      type: object
+      properties:
+        cart_id:
+          type: integer
+          description: The unique identifier for a cart
+        user_id:
+          type: integer
+          description: The ID of the user the cart belongs to
+        # ... other properties ...
+    CartItem:
+      type: object
+      properties:
+        cart_item_id:
+          type: integer
+          description: The unique identifier for a cart item
+        cart_id:
+          type: integer
+          description: The ID of the cart the item belongs to
+        product_id:
+          type: integer
+          description: The ID of the product
+        quantity:
+          type: integer
+          description: The quantity of the product in the cart
+        # ... other properties ...
+    Order:
+      type: object
+      properties:
+        order_id:
+          type: integer
+          description: The unique identifier for an order
+        user_id:
+          type: integer
+          description: The ID of the user who placed the order
+        order_date:
+          type: string
+          format: date-time
+          description: The date and time the order was placed
+        total_amount:
+          type: number
+          format: float
+          description: The total amount of the order
+        # ... other properties ...
+    OrderItem:
+      type: object
+      properties:
+        order_item_id:
+          type: integer
+          description: The unique identifier for an order item
+        order_id:
+          type: integer
+          description: The ID of the order the item belongs to
+        product_id:
+          type: integer
+          description: The ID of the product
+        quantity:
+          type: integer
+          description: The quantity of the product in the order
+        price:
+          type: number
+          format: float
+          description: The price of the product at the time of ordering
+        # ... other properties ...
