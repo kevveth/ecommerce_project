@@ -1,5 +1,8 @@
-const express = require('express');
-const db = require('./db'); // Import the database module
+const express = require('express'),
+        passport = require('passport'),
+        LocalStrategy = require('passport-local').LocalStrategy,
+        bcrypt = require('bcrypt'),
+        db = require('./db'); // Import the database module
 
 const usersRouter = require('./routes/users'),
         productsRouter = require('./routes/products'),

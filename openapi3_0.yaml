@@ -47,6 +47,38 @@ paths:
                 $ref: '#/components/schemas/User'
         '404':
           description: User not found
+  /users/registration:
+    post:
+      tags:
+        - Users
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object  
+                    properties:
+                        username:
+                            type: string
+                            description: The username
+                        email:
+                            type: string
+                            description: The email address
+                        password:
+                            type: string
+                            description: The password
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request (e.g., username or email already exists)
+        '500':
+          description: Internal server error
   /products:
     get:
       tags:
