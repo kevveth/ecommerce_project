@@ -31,7 +31,8 @@ const getAllData = async (table) => {
 };
 
 module.exports = {
+  pool,
   query,
   getClient,
-  getAllData
+  getAllData,
 };

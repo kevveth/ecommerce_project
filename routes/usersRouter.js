@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const db = require("../db");
-const bcrypt = require("bcrypt");
+// const passport = require('../passport/');
 
 const table = "users";
 
@@ -29,34 +29,6 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching user.");
-  }
-});
-
-// POST /users - Register a new user
-router.post("/registration", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-
-    //Generate a salt
-    let saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-
-    // Hash the password with the salt
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const result = await db.query(
-      "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *;",
-      [username, email, hashedPassword]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    if (err.code === "23505") {
-      // Unique constraint violation
-      return res.status(400).send("Username or email already exists.");
-    }
-    res.status(500).send("Error registering user.");
   }
 });
 
