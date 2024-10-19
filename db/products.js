@@ -2,11 +2,11 @@ const db = require("./index");
 
 const findProductById = async (productId) => {
   try {
-    const result = await db.query(
+    const product = await db.query(
       "SELECT * FROM products WHERE product_id = $1",
       [productId]
     );
-    return result;
+    return product;
   } catch (err) {
     console.error(err);
     throw err;
