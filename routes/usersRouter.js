@@ -1,6 +1,8 @@
 const router = require("express").Router();
-const db = require("../db");
-// const passport = require('../passport/');
+const db = {
+  ...require("../db"),
+  users: require("../db/users"),
+};
 
 const table = "users";
 
@@ -24,6 +26,20 @@ router.get("/:id", async (req, res) => {
     ]);
     if (result.rows.length === 0) {
       return res.status(404).send("User not found.");
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching user.");
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const result = await db.users.findByUserId(userId);
+    if (result.rows.length === 0) {
+      return res.status(404).send("User not found.")
     }
     res.json(result.rows[0]);
   } catch (err) {

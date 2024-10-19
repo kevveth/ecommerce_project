@@ -1,8 +1,8 @@
-const { query } = require("./index");
+const db = require("./index");
 
 const findByUsername = async (username) => {
   try {
-    const result = await query("SELECT * FROM users WHERE username = $1", [
+    const result = await db.query("SELECT * FROM users WHERE username = $1", [
       username,
     ]);
     const user = result.rows[0];
@@ -13,13 +13,12 @@ const findByUsername = async (username) => {
   }
 };
 
-const findByUserId = async (user_id) => {
+const findByUserId = async (userId) => {
   try {
-    const result = await query("SELECT * FROM users WHERE user_id = $1", [
-      user_id,
+    const result = await db.query("SELECT * FROM users WHERE user_id = $1", [
+      userId,
     ]);
-    const user = result.rows[0];
-    return user;
+    return result;
   } catch (err) {
     console.error(err);
     throw err;
