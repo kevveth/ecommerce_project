@@ -1,4 +1,4 @@
-const db = require("./index");
+const db = require("../db/index");
 
 const findByUsername = async (username) => {
   try {

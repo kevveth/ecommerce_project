@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const db = {
   ...require("../db"),
-  users: require("../db/users"),
+  users: require("../Controllers/usersController"),
 };
 
 const table = "users";

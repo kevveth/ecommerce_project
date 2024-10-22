@@ -2,7 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const db = {
   ...require("../db"),
-  products: require("../db/products"),
+  products: require("../Controllers/productsController"),
 };
 
 describe("Products Endpoints", () => {
@@ -28,8 +28,16 @@ describe("Products Endpoints", () => {
 
       // console.log(res.body);
       expect(res.statusCode).toBe(200);
-      expect(res.body.length).toBeGreaterThanOrEqual(0); // There should be some products in the "Electronics" category
+      expect(res.body.data.products.length).toBeGreaterThanOrEqual(0); // There should be some products in the "Electronics" category
     });
+
+    it("should fetch a product by its ID", async () => {
+      const res = await request(app)
+        .get('/products/1')
+        .expect(200)
+
+        expect(res.body.data.product).toHaveProperty('product_id');
+    })
   });
 
   describe("POST /products", () => {
@@ -42,9 +50,9 @@ describe("Products Endpoints", () => {
         category_id: 1,
       });
 
-      console.log(res.body);
+      // console.log(res.body);
       expect(res.statusCode).toBe(201);
-      expect(res.body).toHaveProperty("product_id");
+      expect(res.body.data.newProduct).toHaveProperty("product_id");
     });
   });
 
@@ -86,7 +94,7 @@ describe("Products Endpoints", () => {
         category_id: 1
       });
       expect(createRes.statusCode).toBe(201); 
-      const productIdToDelete = createRes.body.product_id;
+      const productIdToDelete = createRes.body.data.newProduct.product_id;
   
       // Now, delete the product
       const res = await request(app).delete(`/products/${productIdToDelete}`);

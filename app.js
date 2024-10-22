@@ -6,6 +6,8 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3001;
 
+// app.use(express.json());
+
 // Logging Middleware
 const morgan = require("morgan");
 app.use(morgan("dev"));
@@ -25,9 +27,7 @@ const initializePassport = require("./passport-config.js");
 // Initialize Passport
 initializePassport(passport);
 
-// Middleware
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+// Authentication Middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -37,6 +37,10 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Error Handling Middleware
+const CustomError = require('./utils/CustomErrorHandler.js')
+const globalErrorHandler = require('./Controllers/errorController.js')
 
 // Routes
 const usersRouter = require("./routes/usersRouter.js");
@@ -85,6 +89,9 @@ app.use("/orders", ordersRouter);
 app.use("/order_items", orderItemsRouter);
 app.use("/carts", cartsRouter);
 app.use("/cart_items", cartItemsRouter);
+
+// Error Logging Middleware
+app.use(globalErrorHandler);
 
 // Start server
 if (require.main === module) {

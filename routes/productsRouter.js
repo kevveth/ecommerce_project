@@ -1,65 +1,22 @@
 const router = require("express").Router();
 const db = {
-  ...require("../db"),
-  products: require("../db/products"),
+  ...require("../db")
 };
+
+const ProductsController = require("../Controllers/productsController")
+
 const table = "products";
 // GET /products?category={categoryId} - Get all products, optionally filtered by category
-router.get("/", async (req, res) => {
-  try {
-    const categoryId = req.query.category;
+router.get("/", ProductsController.getAllProducts);
 
-    let query = "SELECT * FROM " + table;
-    const values = [];
-
-    if (categoryId) {
-      query += " WHERE category_id = $1";
-      values.push(categoryId);
-    }
-
-    const result = await db.query(query, values);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching products.");
-  }
-});
-
-// GET /products/{productId} - Get a specific product by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const productId = parseInt(req.params.id);
-    const result = await db.products.findProductById(productId);
-    if (result.rows.length === 0) {
-      return res.status(404).send("Product not found.");
-    }
-    res.status(200).json(result.rows[0]);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Error fetching product.");
-  }
-});
+// GET /products/:id - Get a product by its product_id
+router.get('/:id', ProductsController.findProductById);
 
 // POST /products - Create a new product
-router.post("/", async (req, res) => {
-  try {
-    const { name, description, price, image_url, category_id } = req.body;
-    const result = await db.products.createNewProduct(
-      name,
-      description,
-      price,
-      image_url,
-      category_id
-    );
-    res.status(201).json(result);
-  } catch (error) {
-    console.error(err);
-    res.status(500).send("Error creating product.");
-  }
-});
+router.post("/", ProductsController.createNewProduct);
 
 // PUT /products/{productId} - Update an existing product
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   const productId = parseInt(req.params.id);
 
   try {
@@ -93,7 +50,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE /products/{productId} - Delete a product
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   const productId = parseInt(req.params.id);
 
   try {

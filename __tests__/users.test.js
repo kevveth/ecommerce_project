@@ -1,5 +1,5 @@
 // __tests__/users.test.js
-const { findByUsername } = require('../db/users');
+const { findByUsername } = require('../Controllers/usersController');
 const { pool, query } = require('../db');
 
 describe('findByUsername', () => {
