@@ -66,11 +66,11 @@ describe("Products Endpoints", () => {
       
       console.log(res.body)
       expect(res.statusCode).toBe(200);
-      expect(res.body.product_id).toBe(1);
-      expect(res.body.name).toBe("Updated Product");
-      expect(res.body.description).toBe("This is an updated product");
-      expect(res.body.price).toEqual(150.0)
-      expect(res.body.category_id).toBe(1);
+      expect(res.body.data.updatedProduct.product_id).toBe(1);
+      expect(res.body.data.updatedProduct.name).toBe("Updated Product");
+      expect(res.body.data.updatedProduct.description).toBe("This is an updated product");
+      expect(res.body.data.updatedProduct.price).toEqual(150.0)
+      expect(res.body.data.updatedProduct.category_id).toBe(1);
     });
 
     it("should return 404 for a non-existent product", async () => {
@@ -79,7 +79,7 @@ describe("Products Endpoints", () => {
       });
 
       expect(res.statusCode).toBe(404);
-      expect(res.body).toEqual({ message: "Product not found." });
+      expect(res.body.message).toEqual("Product not found.");
     });
   });
 
@@ -105,7 +105,7 @@ describe("Products Endpoints", () => {
       const res = await request(app).delete('/products/999');
       expect(res.statusCode).toBe(404);   
   
-      expect(res.text).toBe('Product not found.');
+      expect(res.body.message).toBe('Product not found.');
     });
   });
 });

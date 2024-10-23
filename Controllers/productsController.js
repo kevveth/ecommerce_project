@@ -66,8 +66,56 @@ const createNewProduct = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+const updateProduct = asyncErrorHandler(async (req, res, next) => {
+  const productId = req.params.id
+  // Update properties of the existing product with values from the request body
+  const updates = req.body;
+
+  // Build the SET clause
+  const updatedFields = Object.keys(updates);
+  const setClause = updatedFields
+    .map((field, index) => `${field} = $${index + 1}`)
+    .join(", ");
+
+  const query = `UPDATE ${table} SET ${setClause} WHERE product_id = $${
+    Object.keys(updates).length + 1
+  } RETURNING *`;
+  const values = [...Object.values(updates), productId];
+  const result = await db.query(query, values);
+
+  if (result.rowCount === 0) {
+    const error = new CustomError("Product not found.", 404);
+    return next(error);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedProduct: { ...result.rows[0], price: parseFloat(result.rows[0].price)}
+    }
+  })
+})
+
+const deleteProduct = asyncErrorHandler(async (req, res, next) => {
+  const productId = parseInt(req.params.id);
+  const result = await db.query(
+    "DELETE FROM products WHERE product_id = $1",
+    [productId]
+  );
+  if (result.rowCount === 0) {
+    const error = new CustomError('Product not found.', 404);
+    return next(error);
+  }
+  res.status(204).json({ // 204 No Content
+    status: 'success',
+    data: {}
+  }); 
+})
+
 module.exports = {
   getAllProducts,
   findProductById,
   createNewProduct,
+  updateProduct,
+  deleteProduct
 };

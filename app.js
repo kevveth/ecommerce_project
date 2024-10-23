@@ -6,14 +6,12 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3001;
 
-// app.use(express.json());
-
 // Logging Middleware
 const morgan = require("morgan");
 app.use(morgan("dev"));
 
 // Body Parsing Middleware
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -39,8 +37,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Error Handling Middleware
-const CustomError = require('./utils/CustomErrorHandler.js')
-const globalErrorHandler = require('./Controllers/errorController.js')
+const CustomError = require("./utils/CustomErrorHandler.js");
+const globalErrorHandler = require("./Controllers/errorController.js");
 
 // Routes
 const usersRouter = require("./routes/usersRouter.js");
@@ -50,8 +48,8 @@ const orderItemsRouter = require("./routes/orderItemsRouter.js");
 const cartsRouter = require("./routes/cartsRouter.js");
 const cartItemsRouter = require("./routes/cartItemsRouter.js");
 
-app.get("/", (request, response) => {
-  response.send("Welcome to our simple online ecommerce web app!");
+app.get("/", (req, res) => {
+  res.send("Welcome to our simple online ecommerce web app!");
 });
 
 app.post("/register", async (req, res) => {
