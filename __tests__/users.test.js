@@ -1,38 +1,44 @@
 // __tests__/users.test.js
-const { findByUsername } = require('../Controllers/usersController');
-const { pool, query } = require('../db');
+const request = require("supertest");
+const app = require("../app");
+const { pool, query } = require("../db");
+const UsersController = require("../Controllers/usersController");
 
-describe('findByUsername', () => {
+describe("User endpoints", () => {
   beforeAll(async () => {
-    await query('BEGIN');
+    await query("BEGIN");
   });
 
   afterAll(async () => {
-    await query('ROLLBACK');
+    await query("ROLLBACK");
     pool.end();
   });
 
-  test('should find a user by username', async () => {
-    // Insert a test user, but handle potential unique constraint violations
-    try {
-      await query(
-        'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)',
-        ['testuser', 'testuser@example.com', 'hashed_password']
-      );
-    } catch (err) {
-      // If the user already exists (e.g., from a previous test run), ignore the error
-      if (err.code !== '23505') { 
-        console.error('Error inserting test user:', err);
-      }
-    }
+  describe("GET /users", () => {
+    it("should get all users", async () => {
+      const res = await request(app)
+        .get("/users")
+        .expect("Content-Type", /json/)
+        .expect(200);
+    });
 
-    const user = await findByUsername('testuser');
-    expect(user).toBeDefined();
-    expect(user.username).toBe('testuser');
-  });
+    it("should get a user by their ID", async () => {
+      const res = await request(app)
+        .get("/users/1")
+        .expect("Content-Type", /json/)
+        .expect(200)
 
-  test('should return undefined if user not found', async () => {
-    const user = await findByUsername('nonexistentuser');
-    expect(user).toBeUndefined();
+        expect(res.body.status).toEqual('success')
+        console.log(res.body.data)
+        expect(res.body.data).toBeDefined();
+    });
+
+    it("should throw a 404 error when a user is not found", async () => {
+      const res = await request(app)
+        .get("/users/999")
+        .expect(404);
+
+      expect(res.body.message).toEqual("User not found.")
+    })
   });
 });

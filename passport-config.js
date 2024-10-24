@@ -1,11 +1,13 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
-const { findByUsername } = require("./Controllers/usersController");
+const db = {
+  users: require('./db/users')
+}
 
 const initialize = (passport) => {
   const authenticateUser = async (username, password, done) => {
     try {
-      const user = await findByUsername(username);
+      const user = await db.users.fetchUserByName(username);
       if (!user) {
         return done(null, false, {
           message: "No user with that username.",

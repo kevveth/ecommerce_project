@@ -26,13 +26,33 @@ describe("Authentication", () => {
   });
 
   describe("POST /login", () => {
+    it('should not log in a user with invalid credentials', async () => {
+      // Send a POST request to /login with incorrect credentials
+      const res = await request(app)
+        .post('/login')
+        .send({
+          username: 'testuser',
+          password: 'incorrectpassword', // Use an incorrect password
+        });
+
+      // Check if the response has a 302 status code (redirect)
+      expect(res.statusCode).toBe(302); 
+
+      // Check if the redirect location is back to /login
+      expect(res.headers.location).toBe('/login'); 
+    });
+
     it("should log in a user with valid credentials", async () => {
+      // Send a POST request to /login with correct credentials
       const res = await request(app).post("/login").send({
         username: "testdummy",
         password: "testpassword",
       });
 
+      // Check if the response has a 302 status code (redirect)
       expect(res.statusCode).toBe(302);
+
+      // Check if the user is redirected to the home page after successful login
       expect(res.headers.location).toBe("/");
     });
   });

@@ -1,6 +1,4 @@
 const router = require("express").Router();
-const db = require("../db");
-
 const ProductsController = require("../Controllers/productsController")
 
 router.route('/')

@@ -64,7 +64,6 @@ describe("Products Endpoints", () => {
         price: 150.0,
       });
       
-      console.log(res.body)
       expect(res.statusCode).toBe(200);
       expect(res.body.data.updatedProduct.product_id).toBe(1);
       expect(res.body.data.updatedProduct.name).toBe("Updated Product");
