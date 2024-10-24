@@ -1,4 +1,3 @@
-const CustomError = require('../utils/CustomErrorHandler');
 const db = require('./index')
 
 const fetchUserByName = async (username) => {

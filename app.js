@@ -18,7 +18,6 @@ app.use(bodyParser.json());
 // Database and authentication setup
 const db = require("./db");
 const passport = require("passport");
-const bcrypt = require("bcrypt");
 const session = require("express-session");
 const initializePassport = require("./passport-config.js");
 
@@ -52,26 +51,8 @@ app.get("/", (req, res) => {
   res.send("Welcome to our simple online ecommerce web app!");
 });
 
-app.post("/register", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-
-    let saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const result = await db.query(
-      "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *;",
-      [username, email, hashedPassword]
-    );
-
-    console.log("New user registered:", result.rows[0]);
-    res.redirect("login");
-  } catch (err) {
-    console.error(err);
-    res.redirect("register");
-  }
-});
+const AuthController = require('./Controllers/authController.js')
+app.post("/register", AuthController.register);
 
 app.post(
   "/login",

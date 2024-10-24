@@ -73,14 +73,15 @@ const findProductById = asyncErrorHandler(async (req, res, next) => {
  * @returns {Object} 201 - A JSON response with the newly created product object
  * @returns {Object} 400 - A JSON response with a "Missing required fields" message
  */
-const createNewProduct = asyncErrorHandler(async (req, res) => {
+const createNewProduct = asyncErrorHandler(async (req, res, next) => {
   // Destructure the required fields from the request body
   const { name, description, price, image_url, category_id } = req.body;
 
   // Input validation: Check if any of the required fields are missing
   if (!name || !description || !price || !image_url || !category_id) {
     // If any fields are missing, throw a custom error with a 400 status code
-    throw new CustomError("Missing required fields", 400);
+    const error = new CustomError("Missing required fields", 400);
+    return next(error);
   }
 
   // Insert the new product into the database
