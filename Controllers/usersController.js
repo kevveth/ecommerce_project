@@ -3,7 +3,6 @@ const asyncErrorHandler = require("../utils/AsyncErrorHandler");
 const CustomError = require("../utils/CustomErrorHandler");
 
 // CREATE
-
 const createNewUser = asyncErrorHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
 

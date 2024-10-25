@@ -1,14 +1,6 @@
 const router = require('express').Router();
-const db = require('../db');
+const CartsRouter = require('../Controllers/cartsController')
 
-router.get('/', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM carts');
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching users.')
-    }
-})
+router.get('/', CartsRouter.getAllCarts)
 
 module.exports = router;
