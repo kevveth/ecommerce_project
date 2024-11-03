@@ -41,7 +41,6 @@ const fetchUserById = asyncErrorHandler(async (req, res, next) => {
   ]);
   if (result.rowCount === 0) {
     const error = new CustomError("User not found.", 404);
-    console.log(error)
     return next(error);
   }
   res.status(200).json({

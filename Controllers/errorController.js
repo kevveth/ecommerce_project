@@ -36,6 +36,11 @@ const invalidInputHandler = (err) => {
   return new CustomError(message, 400);
 };
 
+missingUserHandler = (err) => {
+  const message = "That user is not present in the table."
+  return new CustomError(message, 400);
+}
+
 // Global error handling middleware
 module.exports = function (error, req, res, next) {
   // Set default status code and status if not already defined
@@ -50,7 +55,10 @@ module.exports = function (error, req, res, next) {
     // Handle invalid input errors specifically in production
     if (err.code === "22P02") {
       err = invalidInputHandler(err);
+    } else if (err.code === "23503") {
+      err = missingUserHandler(err)
     }
+
     prodErrors(err, res);
   }
 };
