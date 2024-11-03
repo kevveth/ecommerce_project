@@ -1,14 +1,9 @@
 const router = require('express').Router();
-const db = require('../db');
+const OrdersController = require('../Controllers/ordersController')
 
-router.get('/', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM orders');
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching users.')
-    }
-})
+router.get('/', OrdersController.getOrders)
+
+router.route('/:id')
+    .get(OrdersController.getOrderById)
 
 module.exports = router;

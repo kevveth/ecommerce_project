@@ -43,15 +43,13 @@ const globalErrorHandler = require("./Controllers/errorController.js");
 const usersRouter = require("./routes/usersRouter.js");
 const productsRouter = require("./routes/productsRouter.js");
 const ordersRouter = require("./routes/ordersRouter.js");
-const orderItemsRouter = require("./routes/orderItemsRouter.js");
 const cartsRouter = require("./routes/cartsRouter.js");
-const cartItemsRouter = require("./routes/cartItemsRouter.js");
 
 app.get("/", (req, res) => {
   res.send("Welcome to our simple online ecommerce web app!");
 });
 
-const AuthController = require('./Controllers/authController.js')
+const AuthController = require("./Controllers/authController.js");
 app.post("/register", AuthController.register);
 
 app.post(
@@ -64,10 +62,8 @@ app.post(
 
 app.use("/users", usersRouter);
 app.use("/products", productsRouter);
-app.use("/orders", ordersRouter);
-app.use("/order_items", orderItemsRouter);
 app.use("/carts", cartsRouter);
-app.use("/cart_items", cartItemsRouter);
+app.use("/orders", ordersRouter);
 
 // Error Logging Middleware
 app.use(globalErrorHandler);
