@@ -2,7 +2,8 @@ const router = require("express").Router();
 const {
   validateCartInput,
   validateCartItemInput,
-  validateProduct
+  validateProduct,
+  validateUpdate
 } = require("../Middleware/validation");
 const CartsController = require("../Controllers/cartsController");
 
@@ -17,7 +18,7 @@ router
   .route("/:id/cart_items")
   .get(CartsController.getCartItems)
   .post(validateCartItemInput, CartsController.addProductToCart)
-  .put(validateCartItemInput, CartsController.updateCartItem)
+  .put(validateUpdate, CartsController.updateCartItem)
   .delete(validateProduct, CartsController.removeProductFromCart);
 
 router.route("/user/:id").get(CartsController.getCartsByUserId);

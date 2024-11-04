@@ -56,6 +56,11 @@ const deleteProduct = async (cart_id, product_id) => {
   );
 };
 
+const productExistsInCart = async (cart_id, product_id) => {
+  const result = await db.query("SELECT * FROM cart_items WHERE cart_id = $1 AND product_id = $2", [cart_id, product_id])
+  return result.rowCount > 0;
+}
+
 module.exports = {
   fetchCarts,
   fetchCartByCartId,
@@ -65,4 +70,5 @@ module.exports = {
   fetchCartItems,
   updateProduct,
   deleteProduct,
+  productExistsInCart
 };

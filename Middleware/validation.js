@@ -35,8 +35,8 @@ const validateCartItemInput = [
     .isInt()
     .withMessage("Cart ID must be an integer")
     .custom(async (cart_id) => {
-      const cart = await db.carts.fetchCartByCartId(cart_id);
-      if (!cart) {
+      const cartExists = await db.carts.fetchCartByCartId(cart_id);
+      if (!cartExists) {
         throw new CustomError("Invalid ID, cart does not exist", 400);
       }
     }),
@@ -79,7 +79,7 @@ const validateProduct = [
       }
     }),
   (req, res, next) => {
-    console.log(req.body)
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -89,25 +89,51 @@ const validateProduct = [
   },
 ];
 
+// TODO:
 const validateUpdate = [
-    param("id")
-    .exists().withMessage("Cart ID is required")
-    .isInt().withMessage("Cart ID must be an integer")
+  param("id")
+    .exists()
+    .withMessage("Cart ID is required")
+    .isInt()
+    .withMessage("Cart ID must be an integer")
     .custom(async (cart_id) => {
       const cart = await db.carts.fetchCartByCartId(cart_id);
       if (!cart) {
         throw new CustomError("Invalid ID, cart does not exist", 400);
       }
     }),
-    body("product_id"),
-    body("quantity"),
-    (req, res, next) => {
+  body("product_id")
+    .exists()
+    .withMessage("Product ID is required")
+    .isInt()
+    .withMessage("Product ID must be an integer")
+    .custom(async (product_id, { req }) => {
+      const cart_id = req.params.id;
+      const productExists = await db.carts.productExistsInCart(product_id);
+      if (!productExists) {
+        throw new CustomError("Invalid ID, product does not exist", 400);
+      }
+    }),
+  body("quantity")
+    .exists()
+    .withMessage("Quantity is required")
+    .isInt({ min: 1 })
+    .withMessage("Quantity must be a positive integer"),
 
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new CustomError("Validation Error", 404);
+      error.errors = errors.array();
+      return next(error);
     }
-]
+    next();
+  },
+];
 
 module.exports = {
   validateCartInput,
   validateCartItemInput,
-  validateProduct
+  validateProduct,
+  validateUpdate
 };
