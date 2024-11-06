@@ -1,5 +1,12 @@
 const db = require("./index");
 
+const exists = async (cart_id) => {
+  const result = await db.query("SELECT 1 FROM carts WHERE cart_id = $1", [
+    cart_id,
+  ]);
+  return result.rows[0] ? true : false;
+};
+
 const fetchCarts = async () => {
   const result = await db.query("SELECT * FROM carts");
   return result;
@@ -62,6 +69,7 @@ const productExistsInCart = async (cart_id, product_id) => {
 }
 
 module.exports = {
+  exists,
   fetchCarts,
   fetchCartByCartId,
   fetchCartsByUserId,
