@@ -1,9 +1,9 @@
 const { body, param, validationResult } = require("express-validator");
-const CustomError = require("../utils/CustomErrorHandler");
+const CustomError = require("../../utils/CustomErrorHandler");
 const db = {
-  carts: require("../db/carts"),
-  products: require("../db/products"),
-  users: require("../db/users"),
+  carts: require("../../db/carts"),
+  products: require("../../db/products"),
+  users: require("../../db/users"),
 };
 
 const validateCartInput = [

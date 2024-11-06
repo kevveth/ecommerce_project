@@ -148,13 +148,11 @@ describe("Carts Endpoints", () => {
       cartId = createCartRes.body.data.cart.cart_id;
     });
 
-    fit("should update a cart item's quantity", async () => {
+    it("should update a cart item's quantity", async () => {
       const res = await request(app)
         .put(`/carts/${cartId}/cart_items`)
         .send({ product_id: 10, quantity: 5})
-        // .expect(400)
-
-        console.log(res.body)
+        .expect(404)
     })
   });
 });

@@ -37,9 +37,9 @@ const invalidInputHandler = (err) => {
 };
 
 missingUserHandler = (err) => {
-  const message = "That user is not present in the table."
+  const message = "That user is not present in the table.";
   return new CustomError(message, 400);
-}
+};
 
 // Global error handling middleware
 module.exports = function (error, req, res, next) {
@@ -48,15 +48,16 @@ module.exports = function (error, req, res, next) {
   error.status = error.status || "error";
 
   // Handle errors differently based on the environment (development or production)
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "development"|| process.env.NODE_ENV === "test") {
     devErrors(error, res);
   } else if (process.env.NODE_ENV === "production") {
-    let err = JSON.parse(JSON.stringify(error))
+    let err = JSON.parse(JSON.stringify(error));
+    
     // Handle invalid input errors specifically in production
     if (err.code === "22P02") {
       err = invalidInputHandler(err);
     } else if (err.code === "23503") {
-      err = missingUserHandler(err)
+      err = missingUserHandler(err);
     }
 
     prodErrors(err, res);
