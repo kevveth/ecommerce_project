@@ -1,5 +1,9 @@
 const db = require('./index')
 
-module.exports = {
+const createOrder = async () => {
     
+}
+
+module.exports = {
+    createOrder
 }

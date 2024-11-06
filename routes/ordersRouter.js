@@ -1,9 +1,15 @@
-const router = require('express').Router();
-const OrdersController = require('../Controllers/ordersController')
+const router = require("express").Router();
+const OrdersController = require("../Controllers/ordersController");
+// const { param, validationResult } = require("express-validator");
+const { validateOrder, validateNewOrder } = require("../Middleware/Validation/ordersValidator");
 
-router.get('/', OrdersController.getOrders)
+router
+  .route("/")
+  .get(OrdersController.getOrders)
+  .post(validateNewOrder, OrdersController.createOrder);
 
-router.route('/:id')
-    .get(OrdersController.getOrderById)
+router.get('/:id', validateOrder, OrdersController.getOrderById);
+router.get('/:id/order_items', validateOrder, OrdersController.getOrderItems)
+
 
 module.exports = router;
