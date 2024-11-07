@@ -40,6 +40,14 @@ const validateNewOrder = [
       if (!cartExists) {
         throw new CustomError("Invalid ID, cart does not exist", 400);
       }
+    })
+    .custom(async (cart_id, { req }) => {
+      const user_id = req.body.user_id
+      const cartResult = await db.query("SELECT * FROM carts WHERE cart_id = $1", [cart_id]);
+      const cart = cartResult.rows[0];
+      if(user_id !== cart.user_id) {
+        throw new CustomError(`Cart with ID ${cart_id} does not belong to User with ID ${user_id}`, 400);
+      }
     }),
   (req, res, next) => {
     const errors = validationResult(req);
