@@ -55,68 +55,77 @@ const createOrder = asyncErrorHandler(async (req, res, next) => {
   const { user_id, cart_id } = req.body;
   const client = await db.pool.connect();
 
-  // 1. Retrieve cart items
-  const cartItemsResult = await client.query(
-    "SELECT * FROM cart_items WHERE cart_id = $1",
-    [cart_id]
-  );
-  if (cartItemsResult.rowCount === 0) {
-    const err = new CustomError("Cart is empty", 400);
-    return next(err);
-  }
-
-  const cartItems = cartItemsResult.rows;
-
-  // 2. Calculate total amount
-  let total_amount = 0;
-  for (const item of cartItems) {
-    const productResult = await client.query(
-      "SELECT price FROM products WHERE product_id = $1",
-      [item.product_id]
+  try {
+    // 1. Retrieve cart items
+    const cartItemsResult = await client.query(
+      "SELECT * FROM cart_items WHERE cart_id = $1",
+      [cart_id]
     );
-    if (productResult.rowCount === 0) {
-      const err = new CustomError(
-        `Product with ID ${item.product_id} not found`,
-        404
-      );
+    if (cartItemsResult.rowCount === 0) {
+      const err = new CustomError("Cart is empty", 400);
       return next(err);
     }
-    const product = productResult.rows[0];
-    total_amount += product.price * item.quantity;
-  }
 
-  // 3. Create the order
-  let orderResult = await client.query(
-    "INSERT INTO orders (user_id, total_amount) VALUES ($1, $2) RETURNING *",
-    [user_id, total_amount]
-  );
-  const order = orderResult.rows[0];
+    const cartItems = cartItemsResult.rows;
 
-  // 4. Create the order items
-  let orderItems = [];
-  for (const item of cartItems) {
-    const priceResult = await client.query(
-      "SELECT price FROM products WHERE product_id = $1",
-      [item.product_id]
+    // 2. Calculate total amount
+    let total_amount = 0;
+    for (const item of cartItems) {
+      const productResult = await client.query(
+        "SELECT price FROM products WHERE product_id = $1",
+        [item.product_id]
+      );
+      if (productResult.rowCount === 0) {
+        const err = new CustomError(
+          `Product with ID ${item.product_id} not found`,
+          404
+        );
+        return next(err);
+      }
+      const product = productResult.rows[0];
+      total_amount += product.price * item.quantity;
+    }
+
+    // 3. Create the order
+    let orderResult = await client.query(
+      "INSERT INTO orders (user_id, total_amount) VALUES ($1, $2) RETURNING *",
+      [user_id, total_amount]
     );
-    item.price = parseFloat(priceResult.rows[0]);
+    const order = orderResult.rows[0];
 
-    const orderItemResult = await client.query(
-      "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4) RETURNING *",
-      [order.order_id, item.product_id, item.quantity, item.price]
-    );
+    // 4. Create the order items
+    let orderItems = [];
+    for (const item of cartItems) {
+      const priceResult = await client.query(
+        "SELECT price FROM products WHERE product_id = $1",
+        [item.product_id]
+      );
+      item.price = parseFloat(priceResult.rows[0]);
 
-    orderItems.push(orderItemResult.rows[0]);
+      const orderItemResult = await client.query(
+        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4) RETURNING *",
+        [order.order_id, item.product_id, item.quantity, item.price]
+      );
+
+      orderItems.push(orderItemResult.rows[0]);
+    }
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        order,
+        orderItems,
+      },
+    });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error(err);
+    next(err);
+  } finally {
+    client.release();
   }
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      order,
-      orderItems,
-    },
-  });
 });
+
 
 module.exports = {
   getOrders,
