@@ -43,14 +43,15 @@ describe("Checkout Endpoint", () => {
     expect(res.body.data.order).toBeDefined();
   });
 
-  it("should return 404 for a non-existent cart", async () => {
+  it("should return 400 for a non-existent cart", async () => {
     const invalidCartId = 99999;
     const res = await request(app)
       .post(`/carts/${invalidCartId}/checkout`)
       .send({ user_id: testUser.user_id })
-      .expect(404);
+      .expect(400);
 
-    expect(res.body.message).toBe("Cart not found");
+    expect(res.body.message).toBe("Validation Error")
+    expect(res.body.error.errors[0].msg).toBe("Cart not found");
   });
 
   it("should return 400 for an empty cart", async () => {
