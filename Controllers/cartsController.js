@@ -1,7 +1,8 @@
 const db = {
-  ...require("../db/index"),
-  carts: require("../db/carts.js"),
-  users: require("../db/users.js"),
+  ...require('../db/index'),
+  carts: require('../db/carts.js'),
+  users: require('../db/users.js'),
+  orders: require('../db/orders.js')
 };
 const asyncErrorHandler = require("../utils/AsyncErrorHandler");
 const CustomError = require("../utils/CustomErrorHandler");
@@ -65,17 +66,8 @@ const getCartItems = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// Create a new cart
 const createNewCart = asyncErrorHandler(async (req, res, next) => {
   const { user_id } = req.body;
-
-  // const validUser = await db.users.exists(user_id);
-  // console.log(validUser);
-
-  // if(!validUser) {
-  //   const err = new CustomError("Invalid user ID. User does not exist.", 400);
-  //   return next(err);
-  // }
   const newCart = await db.carts.addNewCart(user_id);
 
   res.status(201).json({
@@ -109,7 +101,7 @@ const addProductToCart = asyncErrorHandler(async (req, res, next) => {
     return next(err);
   }
 
-  const cartItem = await db.carts.addProduct(cartId, product_id, quantity);
+  const cartItem = await db.carts.addCartItem(cartId, product_id, quantity);
 
   res.status(201).json({
     status: "success",
@@ -143,6 +135,27 @@ const removeProductFromCart = asyncErrorHandler(async (req, res, next) => {
   })
 })
 
+const checkout = asyncErrorHandler(async (req, res, next) => {
+  const cart_id = req.params.id;
+  const { user_id } = req.body;
+
+  // - (Simulate) Payment processing 
+  // For now, assume success. Integrate a payment gateway later.
+
+  // - Create the order
+  const order = await db.orders.createOrder(user_id, cart_id);
+
+  // - (Optional) Clear the cart (within the transaction)
+  //
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      order,
+    },
+  });
+})
+
 module.exports = {
   getAllCarts,
   getCartByCartId,
@@ -151,5 +164,6 @@ module.exports = {
   addProductToCart,
   getCartItems,
   updateCartItem,
-  removeProductFromCart
+  removeProductFromCart,
+  checkout
 };

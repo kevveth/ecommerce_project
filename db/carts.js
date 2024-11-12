@@ -33,7 +33,7 @@ const addNewCart = async (user_id) => {
   return result.rows[0];
 };
 
-const addProduct = async (cart_id, product_id, quantity) => {
+const addCartItem = async (cart_id, product_id, quantity) => {
   const result = await db.query(
     "INSERT INTO cart_items (cart_id, product_id, quantity)  VALUES ($1, $2, $3) RETURNING *",
     [cart_id, product_id, quantity]
@@ -74,7 +74,7 @@ module.exports = {
   fetchCartByCartId,
   fetchCartsByUserId,
   addNewCart,
-  addProduct,
+  addCartItem,
   fetchCartItems,
   updateProduct,
   deleteProduct,

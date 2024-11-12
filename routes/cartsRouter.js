@@ -1,26 +1,33 @@
 const router = require("express").Router();
 const {
-  validateCartInput,
-  validateCartItemInput,
+  validateCartId,
   validateProduct,
-  validateUpdate
+  validateUserId,
+  validateQuantity,
+  validateCartBelongsToUser,
+  validateCartHasItems
 } = require("../Middleware/Validation/cartsValidator");
 const CartsController = require("../Controllers/cartsController");
 
 router
   .route("/")
   .get(CartsController.getAllCarts)
-  .post(validateCartInput, CartsController.createNewCart);
+  .post(validateUserId, CartsController.createNewCart);
 
 router.route("/:id").get(CartsController.getCartByCartId);
 
+const validateCartItem = [validateCartId, validateProduct, validateQuantity];
 router
-  .route("/:id/cart_items")
+  .route("/:id/items")
   .get(CartsController.getCartItems)
-  .post(validateCartItemInput, CartsController.addProductToCart)
-  .put(validateUpdate, CartsController.updateCartItem)
+  .post(validateCartItem, CartsController.addProductToCart)
+  .put(validateCartItem, CartsController.updateCartItem)
   .delete(validateProduct, CartsController.removeProductFromCart);
 
 router.route("/user/:id").get(CartsController.getCartsByUserId);
+
+const validateCheckout = [validateCartId, validateUserId, validateCartBelongsToUser, validateCartHasItems]
+router.route('/:id/checkout')
+  .post(validateCheckout, CartsController.checkout)
 
 module.exports = router;

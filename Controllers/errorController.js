@@ -2,6 +2,7 @@ const CustomError = require("../utils/CustomErrorHandler");
 
 // Function to handle errors in development mode
 const devErrors = (error, res) => {
+  //  console.error(error);
   // Send a detailed error response with stack trace
   res.status(error.statusCode).json({
     status: error.statusCode,

@@ -20,19 +20,8 @@ const query = async (text, params) => {
   return res;
 };
 
-const getAllData = async (table) => {
-  try {
-    const query = await pool.query("SELECT * FROM " + table + " ;");
-    return query.rows;
-  } catch (err) {
-    console.error(`Error fetching data from table: ${table}`, err);
-    throw err; // Rethrow error to be handled by the route handler
-  }
-};
-
 module.exports = {
   pool,
   query,
   getClient,
-  getAllData,
 };

@@ -77,26 +77,27 @@ describe("Order Endpoints", () => {
         .post("/orders")
         .send({
           user_id: testOrder.user_id,
-          cart_id: 273,
+          cart_id: 288,
         })
-        // .expect(201);
-        console.log(res.body.error)
+        .expect(201);
     });
 
     describe("Bad Requests", () => {
       it("should return 400 if a cart does not belong to a user", async () => {
-        const user_id = 2
-        const cart_id = 1
+        const user_id = 2;
+        const cart_id = 1;
         const res = await request(app)
-        .post('/orders')
-        .send({
-          user_id,
-          cart_id
-        })
-        .expect(400)
+          .post("/orders")
+          .send({
+            user_id,
+            cart_id,
+          })
+          .expect(400);
 
-        expect(res.body.error.errors[0].msg).toBe(`Cart with ID ${cart_id} does not belong to User with ID ${user_id}`)
-      })
+        expect(res.body.error.errors[0].msg).toBe(
+          `Cart with ID ${cart_id} does not belong to User with ID ${user_id}`
+        );
+      });
 
       it("should return a 400 for an invalid user ID", async () => {
         const res = await request(app)
@@ -164,8 +165,7 @@ describe("Order Endpoints", () => {
           "SELECT * FROM carts WHERE user_id = $1",
           [testDummy.user_id]
         );
-        const emptyCart = emptyCartResult.rows[0]
-        console.log(emptyCart)
+        const emptyCart = emptyCartResult.rows[0];
         const res = await request(app)
           .post("/orders")
           .send({
@@ -174,7 +174,6 @@ describe("Order Endpoints", () => {
           })
           .expect(400);
 
-          console.log(res.body)
         expect(res.body.message).toBe("Cart is empty");
       });
     });
