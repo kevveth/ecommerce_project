@@ -1,8 +1,14 @@
 const asyncErrorHandler = require("../utils/AsyncErrorHandler");
 const UsersController = require("./usersController");
 const bcrypt = require("bcrypt");
+const CustomError = require('../utils/CustomErrorHandler')
+const db = {
+  ...require('../db/index'),
+  users: require('../db/users')
+}
 
 const register = asyncErrorHandler(async (req, res, next) => {
+  console.log(req.headers)
   const { username, email, password } = req.body;
 
   // Input validation

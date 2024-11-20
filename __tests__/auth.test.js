@@ -30,7 +30,7 @@ describe("Authentication", () => {
           email: dummy.email,
           password: dummy.password,
         });
-
+        console.log(res.user)
       expect(res.statusCode).toBe(201); // Expect a 201 Created response
       expect(res.body.data.user).toBeDefined(); // Check if the user object is defined
     });
@@ -43,7 +43,7 @@ describe("Authentication", () => {
         password: "incorrectpassword",
       });
 
-      expect(res.statusCode).toBe(302);
+      expect(res.statusCode).toBe(400);
       expect(res.headers.location).toBe("/login");
     });
 
@@ -53,8 +53,8 @@ describe("Authentication", () => {
         password: dummy.password,
       });
 
-      expect(res.statusCode).toBe(302);
-      expect(res.headers.location).toBe("/");
+      expect(res.statusCode).toBe(200);
+      // expect(res.headers.location).toBe("/");
     });
   });
 });

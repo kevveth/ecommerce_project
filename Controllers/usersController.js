@@ -22,6 +22,8 @@ const createNewUser = asyncErrorHandler(async (req, res, next) => {
 
 // READ
 const fetchAllUsers = asyncErrorHandler(async (req, res, next) => {
+  console.log(req.session)
+  console.log(req.session.id)
   const result = await db.query("SELECT * FROM users");
   const users = result.rows;
 
