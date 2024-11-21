@@ -21,8 +21,18 @@ const fetchUserById = async (id) => {
   return result.rows[0];
 }
 
+const create = async (username, email, password) => {
+  // Insert the new user into the database
+  const result = await db.query(
+    "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *",
+    [username, email, password]
+  );
+  return result.rows[0];
+}
+
 module.exports = {
   exists,
   fetchUserByName,
-  fetchUserById
+  fetchUserById,
+  create
 };

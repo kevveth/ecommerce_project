@@ -1,4 +1,7 @@
-const db = require("../db/index");
+const db = {
+  ...require("../db/index"),
+  users: require('../db/users')
+};
 const asyncErrorHandler = require("../utils/AsyncErrorHandler");
 const CustomError = require("../utils/CustomErrorHandler");
 
@@ -7,15 +10,12 @@ const createNewUser = asyncErrorHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
 
   // Insert the new user into the database
-  const result = await db.query(
-    "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *",
-    [username, email, password]
-  );
+  const newUser = await db.users.create(username, email, password)
 
   res.status(201).json({
     status: "success",
     data: {
-      user: result.rows[0]
+      user: newUser
     },
   });
 });
