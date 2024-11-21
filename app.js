@@ -8,18 +8,15 @@ const session = require("express-session");
 const store = new session.MemoryStore();
 const db = require("./db");
 const passport = require("passport");
-const initializePassport = require("./passport-config.js");
 const port = process.env.PORT || 3001;
+
+const morgan = require("morgan");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Logging Middleware
-const morgan = require("morgan");
 app.use(morgan("dev"));
-
-// Initialize Passport
-initializePassport(passport);
 
 // Authentication Middleware
 app.use(
@@ -34,6 +31,7 @@ app.use(
     store
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,8 +49,6 @@ const AuthController = require("./Controllers/authController.js");
 app.post("/register", AuthController.register);
 
 app.get("/", (req, res) => {
-  console.log(req.session)
-  console.log(req.session.id)
   res.send({msg: "Welcome to our simple online ecommerce web app!"});
 });
 
@@ -62,15 +58,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", AuthController.login);
 
-app.get("/logout", (req, res, next) => {
-  req.logout((err) => {
-    if (err) next(err)
-    res.status(200).json({
-      status: "success",
-      message: "Logout successful"
-    });
-  });
-});
+app.get("/logout", AuthController.logout);
 
 app.use('/auth', authRouter);
 app.use("/users", usersRouter);
