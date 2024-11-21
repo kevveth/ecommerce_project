@@ -2,9 +2,9 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const CustomError = require("./utils/CustomErrorHandler");
 const db = {
-  ...require('./db/index'),
-  users: require('./db/users')
-}
+  ...require("./db/index"),
+  users: require("./db/users"),
+};
 
 const initialize = (passport) => {
   const authenticateUser = async (username, password, done) => {
@@ -26,19 +26,17 @@ const initialize = (passport) => {
       return done(err, null);
     }
   };
-  
-  passport.use(
-    new LocalStrategy(authenticateUser)
-  );
-  
+
+  passport.use(new LocalStrategy(authenticateUser));
+
   passport.serializeUser((user, done) => {
-    done(null, user.user_id)
+    done(null, user.user_id);
   });
 
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await db.users.fetchUserById(id);
-      if (!user) throw new CustomError("User not found", 404)
+      if (!user) throw new CustomError("User not found", 404);
       done(null, user);
     } catch (err) {
       done(err, null);

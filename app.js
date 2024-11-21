@@ -26,9 +26,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 60000 * 60,
-      secure: false
+      secure: false,
     },
-    store
+    store,
   })
 );
 
@@ -39,7 +39,7 @@ app.use(passport.session());
 const globalErrorHandler = require("./Controllers/errorController.js");
 
 // Routes
-const authRouter = require('./routes/authRouter.js');
+const authRouter = require("./routes/authRouter.js");
 const usersRouter = require("./routes/usersRouter.js");
 const productsRouter = require("./routes/productsRouter.js");
 const ordersRouter = require("./routes/ordersRouter.js");
@@ -49,18 +49,18 @@ const AuthController = require("./Controllers/authController.js");
 app.post("/register", AuthController.register);
 
 app.get("/", (req, res) => {
-  res.send({msg: "Welcome to our simple online ecommerce web app!"});
+  res.send({ msg: "Welcome to our simple online ecommerce web app!" });
 });
 
 app.get("/login", (req, res) => {
   res.json({ msg: "Login Page" });
-})
+});
 
 app.post("/login", AuthController.login);
 
 app.get("/logout", AuthController.logout);
 
-app.use('/auth', authRouter);
+app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/products", productsRouter);
 app.use("/carts", cartsRouter);

@@ -7,8 +7,8 @@ describe("Authentication", () => {
   const dummy = {
     username: "testdummy",
     email: "testdummy@example.com",
-    password: "testpassword"
-  }
+    password: "testpassword",
+  };
 
   beforeAll(async () => {
     server = app.listen();
@@ -23,14 +23,12 @@ describe("Authentication", () => {
 
   describe("POST /register", () => {
     it("should register a new user", async () => {
-      const res = await request(app)
-        .post("/register")
-        .send({
-          username: dummy.username,
-          email: dummy.email,
-          password: dummy.password,
-        });
-        console.log(res.user)
+      const res = await request(app).post("/register").send({
+        username: dummy.username,
+        email: dummy.email,
+        password: dummy.password,
+      });
+      console.log(res.user);
       expect(res.statusCode).toBe(201); // Expect a 201 Created response
       expect(res.body.data.user).toBeDefined(); // Check if the user object is defined
     });
