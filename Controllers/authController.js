@@ -1,14 +1,16 @@
 const asyncErrorHandler = require("../utils/AsyncErrorHandler");
 const UsersController = require("./usersController");
 const bcrypt = require("bcrypt");
-const CustomError = require('../utils/CustomErrorHandler')
+const CustomError = require("../utils/CustomErrorHandler");
 const db = {
-  ...require('../db/index'),
-  users: require('../db/users')
-}
+  ...require("../db/index"),
+  users: require("../db/users"),
+};
+const passport = require("passport");
+const initializePassport = require("../passport-config.js");
 
 const register = asyncErrorHandler(async (req, res, next) => {
-  console.log(req.headers)
+  // console.log(req.headers)
   const { username, email, password } = req.body;
 
   // Input validation
@@ -20,11 +22,35 @@ const register = asyncErrorHandler(async (req, res, next) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  req.body.password = hashedPassword
+  // req.body.password = hashedPassword
 
-  UsersController.createNewUser(req, res, next);
+  const newUser = await db.users.create(username, email, hashedPassword);
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      user: newUser,
+    },
+  });
 });
+
+initializePassport(passport);
+
+const login = [
+  passport.authenticate("local"),
+  (req, res) => {
+    console.log(req.session.id);
+    res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      user: {
+        ...req.user,
+      },
+    });
+  },
+];
 
 module.exports = {
   register,
+  login
 };

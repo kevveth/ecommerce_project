@@ -31,7 +31,7 @@ app.use(
       maxAge: 60000 * 60,
       secure: false
     },
-    store: store
+    store
   })
 );
 app.use(passport.initialize());
@@ -60,24 +60,9 @@ app.get("/login", (req, res) => {
   res.json({ msg: "Login Page" });
 })
 
-app.post(
-  "/login",
-  passport.authenticate("local", { failureRedirect: "/login" }),
-  (req, res) => { // Log the user object
-    console.log(req.session.id)
-    res.status(200).json({
-      status: "success",
-      message: "Login successful",
-      user: {
-        ...req.user
-      }
-    })
-  }
-);
+app.post("/login", AuthController.login);
 
 app.get("/logout", (req, res, next) => {
-  // console.log(req)
-  // console.log(`Logged out user: ${req.user.username}`)
   req.logout((err) => {
     if (err) next(err)
     res.status(200).json({
