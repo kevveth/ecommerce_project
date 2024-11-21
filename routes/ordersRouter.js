@@ -1,14 +1,15 @@
-const router = require('express').Router();
-const db = require('../db');
+const router = require("express").Router();
+const OrdersController = require("../Controllers/ordersController");
+// const { param, validationResult } = require("express-validator");
+const { validateOrder, validateNewOrder } = require("../Middleware/Validation/ordersValidator");
 
-router.get('/', async (req, res) => {
-    try {
-        const result = await db.query('SELECT * FROM orders');
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching users.')
-    }
-})
+router
+  .route("/")
+  .get(OrdersController.getOrders)
+  .post(validateNewOrder, OrdersController.createOrder);
+
+router.get('/:id', validateOrder, OrdersController.getOrderById);
+router.get('/:id/order_items', validateOrder, OrdersController.getOrderItems)
+
 
 module.exports = router;
