@@ -10,13 +10,18 @@ const db = require("./db");
 const passport = require("passport");
 const port = process.env.PORT || 3001;
 
+// Logging Middleware
 const morgan = require("morgan");
+app.use(morgan("dev"));
+
+// Swagger Documentation
+const { specs, swaggerUi } = require('./swagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Logging Middleware
-app.use(morgan("dev"));
+
 
 // Authentication Middleware
 app.use(
